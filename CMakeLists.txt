@@ -33,10 +33,18 @@ if (MSVC)
     # disable Visual Studio warnings for fopen() used in the example
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
     # Flags for linking with multithread static C++ runtime
-    set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} /MT")
-    set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /MTd")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-    set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+    option(FORCE_SHARED_CRT "Link against shared CRT even if creating static libraries" OFF)
+    if (FORCE_SHARED_CRT)
+        set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} /MD")
+        set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /MDd")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
+        set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MDd")
+    else()
+        set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE} /MT")
+        set(CMAKE_C_FLAGS_DEBUG     "${CMAKE_C_FLAGS_DEBUG} /MTd")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+        set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+    endif()
 else (MSVC)
     set(CPPLINT_ARG_OUTPUT      "--output=eclipse")
     set(CPPCHECK_ARG_TEMPLATE   "--template=gcc")
@@ -132,25 +140,28 @@ set(SQLITECPP_SCRIPT
 )
 source_group(scripts FILES ${SQLITECPP_SCRIPT})
 
-# All includes are relative to the "include" directory 
-include_directories("${PROJECT_SOURCE_DIR}/include")
-
-# add sources of the wrapper as a "SQLiteCpp" static library
-add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT})
-
-if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
-    set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
-endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
-
 
 # SQLite3 library (mostly usefull under Windows)
 
 option(SQLITECPP_INTERNAL_SQLITE "Add the internal SQLite3 source to the project." ${SQLITECPP_INTERNAL_SQLITE_DEFAULT})
+set(SQLITE_SRC "")
 if (SQLITECPP_INTERNAL_SQLITE)
     # build the SQLite3 C library for Windows (for ease of use) versus Linux sqlite3-dev package
-    add_subdirectory(sqlite3)
+    set(SQLITE_SRC
+     ${PROJECT_SOURCE_DIR}/sqlite3/sqlite3.c
+    )
     include_directories("${PROJECT_SOURCE_DIR}/sqlite3")
 endif (SQLITECPP_INTERNAL_SQLITE)
+
+# All includes are relative to the "include" directory 
+include_directories("${PROJECT_SOURCE_DIR}/include")
+
+# add sources of the wrapper as a "SQLiteCpp" static library
+add_library(SQLiteCpp ${SQLITECPP_SRC} ${SQLITECPP_INC} ${SQLITECPP_DOC} ${SQLITECPP_SCRIPT} ${SQLITE_SRC})
+
+if (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
+    set_target_properties(SQLiteCpp PROPERTIES COMPILE_FLAGS "-fPIC")
+endif (UNIX AND (CMAKE_COMPILER_IS_GNUCXX OR ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang"))
 
 
 # Optional additional targets:
