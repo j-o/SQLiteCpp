@@ -111,7 +111,7 @@ void Statement::bind(const int aIndex, const void* apValue, const int aSize, sql
 }
 
 // Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const int aIndex, const void* apValue, const sqlite_int64 aSize, sqlite3_destructor_type apDel)
+void Statement::bind(const int aIndex, const void* apValue, const sqlite3_uint64 aSize, sqlite3_destructor_type apDel)
 {
     const int ret = sqlite3_bind_blob64(mStmtPtr, aIndex, apValue, aSize, apDel);
     check(ret);
@@ -175,7 +175,7 @@ void Statement::bind(const char* apName, const void* apValue, const int aSize, s
 }
 
 // Bind a binary blob value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
-void Statement::bind(const char* apName, const void* apValue, const sqlite_int64 aSize, sqlite3_destructor_type apDel)
+void Statement::bind(const char* apName, const void* apValue, const sqlite_uint64 aSize, sqlite3_destructor_type apDel)
 {
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
     const int ret = sqlite3_bind_blob64(mStmtPtr, index, apValue, aSize, apDel);

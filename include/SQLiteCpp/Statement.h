@@ -22,6 +22,13 @@ namespace SQLite
 {
 
 
+#if _WIN64 || __x86_64__
+typedef sqlite3_uint64 size_t;
+#else
+typedef int size_t;
+#endif
+
+
 // Forward declaration
 class Database;
 class Column;
@@ -130,18 +137,18 @@ public:
     /**
      * @brief Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const void*          apValue, const int          aSize, sqlite3_destructor_type apDel = SQLITE_TRANSIENT);
+    void bind(const int aIndex, const void*          apValue, const int            aSize, sqlite3_destructor_type apDel = SQLITE_TRANSIENT);
     /**
      * @brief Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const int aIndex, const void*          apValue, const sqlite_int64 aSize, sqlite3_destructor_type apDel = SQLITE_TRANSIENT);
+    void bind(const int aIndex, const void*          apValue, const sqlite3_uint64 aSize, sqlite3_destructor_type apDel = SQLITE_TRANSIENT);
     /**
      * @brief Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     template <typename ValueType>
     void bind(const int aIndex, const std::vector<ValueType>& aValue, sqlite3_destructor_type apDel = SQLITE_TRANSIENT)
     {
-        bind(aIndex, aValue.data(), static_cast<std::ptrdiff_t>(aValue.size() * sizeof(ValueType)), apDel);
+        bind(aIndex, aValue.data(), static_cast<size_t>(aValue.size() * sizeof(ValueType)), apDel);
     }
     /**
      * @brief Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
@@ -175,18 +182,18 @@ public:
     /**
      * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const void*           apValue, const int          aSize, sqlite3_destructor_type apDel = SQLITE_TRANSIENT);
+    void bind(const char* apName, const void*           apValue, const int            aSize, sqlite3_destructor_type apDel = SQLITE_TRANSIENT);
     /**
      * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    void bind(const char* apName, const void*           apValue, const sqlite_int64 aSize, sqlite3_destructor_type apDel = SQLITE_TRANSIENT);
+    void bind(const char* apName, const void*           apValue, const sqlite3_uint64 aSize, sqlite3_destructor_type apDel = SQLITE_TRANSIENT);
     /**
      * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
     template <typename ValueType>
     void bind(const char* apName, const std::vector<ValueType>& aValue, sqlite3_destructor_type apDel = SQLITE_TRANSIENT)
     {
-        bind(apName, aValue.data(), static_cast<std::ptrdiff_t>(aValue.size() * sizeof(ValueType)), apDel);
+        bind(apName, static_cast<const void*>(aValue.data()), static_cast<size_t>(aValue.size() * sizeof(ValueType)), apDel);
     }
     /**
      * @brief Bind a NULL value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
@@ -236,14 +243,14 @@ public:
     /**
      * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    inline void bind(const std::string& aName, const void*           apValue, const int         aSize, sqlite3_destructor_type apDel = SQLITE_TRANSIENT)
+    inline void bind(const std::string& aName, const void*           apValue, const int            aSize, sqlite3_destructor_type apDel = SQLITE_TRANSIENT)
     {
         bind(aName.c_str(), apValue, aSize, apDel);
     }
     /**
      * @brief Bind a binary blob value to a named parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement (aIndex >= 1)
      */
-    inline void bind(const std::string& aName, const void*           apValue, const sqlite_int64 aSize, sqlite3_destructor_type apDel = SQLITE_TRANSIENT)
+    inline void bind(const std::string& aName, const void*           apValue, const sqlite3_uint64 aSize, sqlite3_destructor_type apDel = SQLITE_TRANSIENT)
     {
         bind(aName.c_str(), apValue, aSize, apDel);
     }
