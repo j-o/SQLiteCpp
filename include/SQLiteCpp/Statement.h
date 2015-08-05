@@ -498,7 +498,7 @@ private:
     {
         if (SQLITE_OK != aRet)
         {
-            throw SQLite::Exception(sqlite3_errmsg(mStmtPtr));
+            throw SQLite::SqlException(static_cast<sqlite3_stmt*>(mStmtPtr));
         }
     }
 
@@ -509,7 +509,7 @@ private:
     {
         if (false == mbOk)
         {
-            throw SQLite::Exception("No row to get a column from. executeStep() was not called, or returned false.");
+            throw SQLite::SqlException(static_cast<sqlite3_stmt*>(mStmtPtr), "No row to get a column from. executeStep() was not called, or returned false.");
         }
     }
 
@@ -520,9 +520,17 @@ private:
     {
         if ((aIndex < 0) || (aIndex >= mColumnCount))
         {
-            throw SQLite::Exception("Column index out of range.");
+            throw SQLite::SqlException(static_cast<sqlite3_stmt*>(mStmtPtr), "Column index out of range.");
         }
     }
+
+    int parameterIndex(const char* apName);
+
+    template <typename Function, typename... Args>
+    void bind(const Function& aFunction, const char* apName, Args&&... aArgs);
+
+    template <typename Function, typename... Args>
+    void bind(const Function& aFunction, const int aIndex, Args&&... aArgs);
 
 private:
     typedef std::map<std::string, int> TColumnNames;

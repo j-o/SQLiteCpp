@@ -70,124 +70,125 @@ void Statement::clearBindings()
 // Bind an int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const int& aValue)
 {
-    const int ret = sqlite3_bind_int(mStmtPtr, aIndex, aValue);
-    check(ret);
+    bind(sqlite3_bind_int, aIndex, aValue);
 }
 
 // Bind a 64bits int value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const sqlite3_int64& aValue)
 {
-    const int ret = sqlite3_bind_int64(mStmtPtr, aIndex, aValue);
-    check(ret);
+    bind(sqlite3_bind_int64, aIndex, aValue);
 }
 
 // Bind a double (64bits float) value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const double& aValue)
 {
-    const int ret = sqlite3_bind_double(mStmtPtr, aIndex, aValue);
-    check(ret);
+    bind(sqlite3_bind_double, aIndex, aValue);
 }
 
 // Bind a string value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const std::string& aValue)
 {
-    const int ret = sqlite3_bind_text(mStmtPtr, aIndex, aValue.c_str(),
-                                      static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
-    check(ret);
+    bind(sqlite3_bind_text64, aIndex, aValue.c_str(), aValue.size(), SQLITE_TRANSIENT, SQLITE_UTF8);
 }
 
 // Bind a text value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const char* apValue)
 {
-    const int ret = sqlite3_bind_text(mStmtPtr, aIndex, apValue, -1, SQLITE_TRANSIENT);
-    check(ret);
+    bind(sqlite3_bind_text, aIndex, apValue, -1, SQLITE_TRANSIENT);
 }
 
 // Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const void* apValue, const int aSize, sqlite3_destructor_type apDel)
 {
-    const int ret = sqlite3_bind_blob(mStmtPtr, aIndex, apValue, aSize, apDel);
-    check(ret);
+    bind(sqlite3_bind_blob, aIndex, apValue, aSize, apDel);
 }
 
 // Bind a binary blob value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex, const void* apValue, const sqlite3_uint64 aSize, sqlite3_destructor_type apDel)
 {
-    const int ret = sqlite3_bind_blob64(mStmtPtr, aIndex, apValue, aSize, apDel);
-    check(ret);
+    bind(sqlite3_bind_blob64, aIndex, apValue, aSize, apDel);
 }
 
 // Bind a NULL value to a parameter "?", "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const int aIndex)
 {
-    const int ret = sqlite3_bind_null(mStmtPtr, aIndex);
-    check(ret);
+    bind(sqlite3_bind_null, aIndex);
 }
 
 
 // Bind an int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const char* apName, const int& aValue)
 {
-    const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
-    const int ret = sqlite3_bind_int(mStmtPtr, index, aValue);
-    check(ret);
+    bind(sqlite3_bind_int, apName, aValue);
 }
 
 // Bind a 64bits int value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const char* apName, const sqlite3_int64& aValue)
 {
-    const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
-    const int ret = sqlite3_bind_int64(mStmtPtr, index, aValue);
-    check(ret);
+    bind(sqlite3_bind_int64, apName, aValue);
 }
 
 // Bind a double (64bits float) value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const char* apName, const double& aValue)
 {
-    const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
-    const int ret = sqlite3_bind_double(mStmtPtr, index, aValue);
-    check(ret);
+    bind(sqlite3_bind_double, apName, aValue);
 }
 
 // Bind a string value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const char* apName, const std::string& aValue)
 {
-    const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
-    const int ret = sqlite3_bind_text(mStmtPtr, index, aValue.c_str(),
-                                      static_cast<int>(aValue.size()), SQLITE_TRANSIENT);
-    check(ret);
+    bind(sqlite3_bind_text64, apName, aValue.c_str(), aValue.size(), SQLITE_TRANSIENT, SQLITE_UTF8);
 }
 
 // Bind a text value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const char* apName, const char* apValue)
 {
-    const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
-    const int ret = sqlite3_bind_text(mStmtPtr, index, apValue, -1, SQLITE_TRANSIENT);
-    check(ret);
+    bind(sqlite3_bind_text, apName, apValue, -1, SQLITE_TRANSIENT);
 }
 
 // Bind a binary blob value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const char* apName, const void* apValue, const int aSize, sqlite3_destructor_type apDel)
 {
-    const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
-    const int ret = sqlite3_bind_blob(mStmtPtr, index, apValue, aSize, apDel);
-    check(ret);
+    bind(sqlite3_bind_blob, apName, apValue, aSize, apDel);
 }
 
 // Bind a binary blob value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const char* apName, const void* apValue, const sqlite_uint64 aSize, sqlite3_destructor_type apDel)
 {
-    const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
-    const int ret = sqlite3_bind_blob64(mStmtPtr, index, apValue, aSize, apDel);
-    check(ret);
+    bind(sqlite3_bind_blob64, apName, apValue, aSize, apDel);
 }
 
 // Bind a NULL value to a parameter "?NNN", ":VVV", "@VVV" or "$VVV" in the SQL prepared statement
 void Statement::bind(const char* apName)
 {
+    bind(sqlite3_bind_null, apName);
+}
+
+int Statement::parameterIndex(const char* apName)
+{
     const int index = sqlite3_bind_parameter_index(mStmtPtr, apName);
-    const int ret = sqlite3_bind_null(mStmtPtr, index);
-    check(ret);
+    if (index == 0) {
+        throw BindException(mStmtPtr, apName, SQLITE_RANGE);
+    }
+    return index;
+}
+
+template <typename Function, typename... Args>
+void Statement::bind(const Function& aFunction, const char* apName, Args&&... aArgs)
+{
+    const int ret = aFunction(mStmtPtr, parameterIndex(apName), std::forward<Args>(aArgs)...);
+    if (ret != SQLITE_OK) {
+        throw BindException(mStmtPtr, apName, ret);
+    }
+}
+
+template <typename Function, typename... Args>
+void Statement::bind(const Function& aFunction, const int aIndex, Args&&... aArgs)
+{
+    const int ret = aFunction(mStmtPtr, aIndex, std::forward<Args>(aArgs)...);
+    if (ret != SQLITE_OK) {
+        throw BindException(mStmtPtr, aIndex, ret);
+    }
 }
 
 
@@ -210,12 +211,12 @@ bool Statement::executeStep()
         {
             mbOk = false;
             mbDone = false;
-            throw SQLite::Exception(sqlite3_errmsg(mStmtPtr));
+            throw SqlException(static_cast<sqlite3_stmt*>(mStmtPtr));
         }
     }
     else
     {
-        throw SQLite::Exception("Statement needs to be reseted.");
+        throw SqlException(static_cast<sqlite3_stmt*>(mStmtPtr), "Statement needs to be reseted.");
     }
 
     return mbOk; // true only if one row is accessible by getColumn(N)
@@ -236,18 +237,18 @@ int Statement::exec()
         {
             mbOk = false;
             mbDone = false;
-            throw SQLite::Exception("exec() does not expect results. Use executeStep.");
+            throw SqlException(static_cast<sqlite3_stmt*>(mStmtPtr), "exec() does not expect results. Use executeStep.");
         }
         else
         {
             mbOk = false;
             mbDone = false;
-            throw SQLite::Exception(sqlite3_errmsg(mStmtPtr));
+            throw SqlException(static_cast<sqlite3_stmt*>(mStmtPtr));
         }
     }
     else
     {
-        throw SQLite::Exception("Statement need to be reseted.");
+        throw SqlException(static_cast<sqlite3_stmt*>(mStmtPtr), "Statement need to be reseted.");
     }
 
     // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE)
@@ -283,7 +284,7 @@ Column  Statement::getColumn(const char* apName)
     const TColumnNames::const_iterator iIndex = mColumnNames.find(apName);
     if (iIndex == mColumnNames.end())
     {
-        throw SQLite::Exception("Unknown column name.");
+        throw SqlException(static_cast<sqlite3_stmt*>(mStmtPtr), "Unknown column name.");
     }
 
     // Share the Statement Object handle with the new Column created
@@ -332,7 +333,7 @@ Statement::Ptr::Ptr(sqlite3* apSQLite, std::string& aQuery) :
     const int ret = sqlite3_prepare_v2(apSQLite, aQuery.c_str(), static_cast<int>(aQuery.size()), &mpStmt, NULL);
     if (SQLITE_OK != ret)
     {
-        throw SQLite::Exception(sqlite3_errmsg(mpSQLite));
+        throw SqlException(apSQLite, aQuery);
     }
     // Initialize the reference counter of the sqlite3_stmt :
     // used to share the mStmtPtr between Statement and Column objects;

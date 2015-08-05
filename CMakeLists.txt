@@ -87,6 +87,7 @@ endif (SQLITE_ENABLE_ASSERT_HANDLER)
 set(SQLITECPP_SRC
  ${PROJECT_SOURCE_DIR}/src/Column.cpp
  ${PROJECT_SOURCE_DIR}/src/Database.cpp
+ ${PROJECT_SOURCE_DIR}/src/Exception.cpp
  ${PROJECT_SOURCE_DIR}/src/Statement.cpp
  ${PROJECT_SOURCE_DIR}/src/Transaction.cpp
 )

@@ -36,9 +36,9 @@ Database::Database(const char* apFilename,
     const int ret = sqlite3_open_v2(apFilename, &mpSQLite, aFlags, apVfs);
     if (SQLITE_OK != ret)
     {
-        std::string strerr = sqlite3_errmsg(mpSQLite);
+        const SqlException exception = SqlException(mpSQLite, "", "file: " + std::string(apFilename));
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
-        throw SQLite::Exception(strerr);
+        throw exception;
     }
 
     if (aBusyTimeoutMs > 0)
@@ -58,9 +58,9 @@ Database::Database(const std::string& aFilename,
     const int ret = sqlite3_open_v2(aFilename.c_str(), &mpSQLite, aFlags, aVfs.empty() ? NULL : aVfs.c_str());
     if (SQLITE_OK != ret)
     {
-        std::string strerr = sqlite3_errmsg(mpSQLite);
+        const SqlException exception = SqlException(mpSQLite, "", "file: " + aFilename);
         sqlite3_close(mpSQLite); // close is required even in case of error on opening
-        throw SQLite::Exception(strerr);
+        throw exception;
     }
 
     if (aBusyTimeoutMs > 0)
@@ -105,7 +105,11 @@ void Database::setBusyTimeout(const int aBusyTimeoutMs) noexcept // nothrow
 int Database::exec(const char* apQueries)
 {
     const int ret = sqlite3_exec(mpSQLite, apQueries, NULL, NULL, NULL);
-    check(ret);
+    
+    if (SQLITE_OK != ret)
+    {
+        throw SQLite::SqlException(mpSQLite, apQueries);
+    }
 
     // Return the number of rows modified by those SQL statements (INSERT, UPDATE or DELETE only)
     return sqlite3_changes(mpSQLite);
